@@ -1,25 +1,65 @@
 const express = require("express");
 const router = express.Router();
+const db = require("./userDb")
+const postDb = require("../posts/postDb")
 
-router.post("/", (req, res) => {});
+router.post("/", validateUser,(req, res) => {
+    console.log('I am in post')
+    const user = req.body;
+    db.insert(user)
+    .then(user => {
+    res.status(201).json(user);
+    })
+    .catch(err => {
+    res.status(500).json({
+    error: "There was an error while saving the user to the database"
+    });
+  }); 
+});
 
-router.post("/:id/posts", (req, res) => {});
+router.get("/", (req, res) => {
+    db.get()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .json({ error: "The users information could not be retrieved." });
+    });
+});
 
-router.get("/", (req, res) => {});
+router.get("/:id", (req, res) => {
+    const userid = req.params.id;
+    const { id } = req.params;
 
-router.get("/:id", (req, res) => {});
+  db.getById(id)
+    .then(user => {
+      console.log("GET post by id:", user);
+      if (user) {
+        res.status(200).json(user);
+      } else {
+        res.status(404).json({ message: "post Not Found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: error });
+    });
+    
+  
+   
+});
 
-router.get("/:id/posts", (req, res) => {});
+router.get("/api/user/:id/posts", (req, res) => {});
 
-router.delete("/:id", (req, res) => {});
+router.delete("/api/user/:id", (req, res) => {});
 
-router.put("/:id", (req, res) => {});
+router.put("/api/user/:id", (req, res) => {});
 
 //custom middleware
 
 function validateUserId(req, res, next) {
     const id = req.params.id;
-
     db.getById(id).then(user => {
       console.log(user);
       if (!user) {
@@ -35,6 +75,8 @@ function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
+    console.log('I am validating user', req.body)
+
     if (!req.body) {
         res.status(400).json({ message: "missing user data" })
       } else if (!req.body.name) {
