@@ -49,12 +49,18 @@ router.delete("/api/posts/:id", (req, res) => {
         res.status(500).json({ message: "The user could not be removed" , error});
     })
 });
-   
-
-
     
 
 router.put("/api/posts/:id", (req, res) => {
+    postDb.update({
+        text: req.body.text, 
+        id: req.body.user_Id})
+     .then(newpost => {
+       res.status(201).json(newpost);
+     })
+     .catch(error => {
+       res.status(500).json({ message: error });
+     })
 
 });
 
@@ -66,6 +72,7 @@ function validatePostId(req, res, next) {
   } else {
     res.status(400).json({ message: "invalid user id" });
   }
+  next()
 }
 
 module.exports = router;
