@@ -71,7 +71,15 @@ postDb.remove(userid)
 })
 });
 
-router.put("/:id", (req, res) => {});
+router.put('/:id', validateUserId, (req, res) => {
+    const id = req.params.id;
+    const newUser = req.body;
+    db.update(id, newUser).then(newUser => {
+      res.status(200).json({ newUser });
+    }).catch(err => {
+      res.status(500).json({error: "user could not be updated"})
+    })
+  });
 
 //custom middleware
 
@@ -92,8 +100,6 @@ function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-    console.log('I am validating user', req.body)
-
     if (!req.body) {
         res.status(400).json({ message: "missing user data" })
       } else if (!req.body.name) {
