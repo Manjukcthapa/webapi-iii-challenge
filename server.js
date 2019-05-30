@@ -1,6 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
-// const postRouter = require('./posts/postRouter.js');
+const postRouter = require('./posts/postRouter.js');
 const userRouter = require('./users/userRouter.js');
 
 
@@ -8,7 +8,7 @@ const server = express();
 server.use(express.json())
 server.use(logger);
 server.use(helmet());
-// server.use('/', postRouter)
+server.use('/', postRouter)
 server.use('/api/users', userRouter)
 
 
