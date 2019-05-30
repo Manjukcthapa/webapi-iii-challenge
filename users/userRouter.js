@@ -29,7 +29,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id",validateUser, (req, res) => {
     const userid = req.params.id;
     const { id } = req.params;
 
@@ -50,11 +50,28 @@ router.get("/:id", (req, res) => {
    
 });
 
-router.get("/api/user/:id/posts", (req, res) => {});
+router.get(":id/posts", (req, res) => {});
 
-router.delete("/api/user/:id", (req, res) => {});
+router.delete("/:id",validateUser, (req, res) => {
+   
+  
+const userid = req.params.id;
+postDb.remove(userid)
+.then(number =>{
+    if(number){
+        res.status(201).json({number});
+    } else {
+        res.status(404).json({
+            message:"The user with specified ID does no exist"
+        })
+    }
+})
+.catch(error => {
+    res.status(500).json({ message: "The user could not be removed" , error});
+})
+});
 
-router.put("/api/user/:id", (req, res) => {});
+router.put("/:id", (req, res) => {});
 
 //custom middleware
 

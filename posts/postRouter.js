@@ -52,7 +52,7 @@ router.delete("/api/posts/:id", (req, res) => {
     
 
 router.put("/api/posts/:id", (req, res) => {
-    postDb.update({
+    postDb.insert({
         text: req.body.text, 
         id: req.body.user_Id})
      .then(newpost => {
